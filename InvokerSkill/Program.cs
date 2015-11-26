@@ -168,11 +168,11 @@ namespace InvokerSkill
                     SpellInfo.Add(alacrity.Name, new SpellStruct(w, w, e));
                     SpellInfo.Add(chaosmeteor.Name, new SpellStruct(e, e, w));
                     spell[1] = tornado;
-                    spell[2] = chaosmeteor;
-                    spell[3] = emp;
-                    spell[4] = deafblast;
-                    spell[5] = coldsnap;
-                    spell[6] = ghostwalk;
+                    spell[2] = emp;
+                    spell[3] = coldsnap;
+                    spell[4] = ghostwalk;
+                    spell[5] = chaosmeteor;
+                    spell[6] = deafblast;
                     spell[7] = forge;
                     spell[8] = icewall;
                     spell[9] = alacrity;
