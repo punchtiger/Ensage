@@ -24,10 +24,12 @@ namespace InvokerSkill
         private static Hero me;
         private static Font FontArray;
         public static Dictionary<string, DotaTexture> _textureCache = new Dictionary<string, DotaTexture>();
-        public static float startposx = 653, startposy = 810;
+        public static double startposx = HUDInfo.ScreenSizeX() * 0.340104167, startposy = HUDInfo.ScreenSizeY() * 0.75;
+        public static float size = (float)Math.Sqrt(2500 * (HUDInfo.ScreenSizeX() * HUDInfo.ScreenSizeY() / 2073600));
+        public static Vector2 vector_size = new Vector2(size, size);
         #endregion
 
-        #region ChangeKey
+        #region ChangeKeyOrSkill
         private static char firstkey = '1';
         private static char secondkey = '2';
         private static char thirdkey = '3';
@@ -79,7 +81,6 @@ namespace InvokerSkill
         {
             if (Game.IsChatOpen)
                 return;
-        //    if(Game.IsKeyDown(0x11)){
             if (args.WParam == firstkey)
                 startspell = 1;
             else if (args.WParam == secondkey)
@@ -101,7 +102,6 @@ namespace InvokerSkill
             else if (args.WParam == tenthkey)
                 startspell = 0;
             else startspell = 10;
-           // }
         }
 
         private static void Game_OnUpdate(EventArgs args)
@@ -167,7 +167,6 @@ namespace InvokerSkill
                     SpellInfo.Add(emp.Name, new SpellStruct(w, w, w));
                     SpellInfo.Add(alacrity.Name, new SpellStruct(w, w, e));
                     SpellInfo.Add(chaosmeteor.Name, new SpellStruct(e, e, w));
-                    #region ChangeSkill
                     spell[1] = tornado;
                     spell[2] = chaosmeteor;
                     spell[3] = emp;
@@ -178,7 +177,6 @@ namespace InvokerSkill
                     spell[8] = icewall;
                     spell[9] = alacrity;
                     spell[0] = ss;
-                    #endregion
                     spell[10] = chaosmeteor; //extra one just for checking condition, will not be used
                 }
 
@@ -230,7 +228,46 @@ namespace InvokerSkill
                 return;
             }
             if (ObjectMgr.LocalHero.ClassID != ClassID.CDOTA_Unit_Hero_Invoker) return;
+            if (!skilltrue)
+            {
+                skilltrue = true;
+                q = me.Spellbook.SpellQ;
+                w = me.Spellbook.SpellW;
+                e = me.Spellbook.SpellE;
 
+                ss = me.FindSpell("invoker_sun_strike");
+                coldsnap = me.FindSpell("invoker_cold_snap");
+                ghostwalk = me.FindSpell("invoker_ghost_walk");
+                icewall = me.FindSpell("invoker_ice_wall");
+                tornado = me.FindSpell("invoker_tornado");
+                deafblast = me.FindSpell("invoker_deafening_blast");
+                forge = me.FindSpell("invoker_forge_spirit");
+                emp = me.FindSpell("invoker_emp");
+                alacrity = me.FindSpell("invoker_alacrity");
+                chaosmeteor = me.FindSpell("invoker_chaos_meteor");
+
+                SpellInfo.Add(ss.Name, new SpellStruct(e, e, e));
+                SpellInfo.Add(coldsnap.Name, new SpellStruct(q, q, q));
+                SpellInfo.Add(ghostwalk.Name, new SpellStruct(q, q, w));
+                SpellInfo.Add(icewall.Name, new SpellStruct(q, q, e));
+                SpellInfo.Add(tornado.Name, new SpellStruct(w, w, q));
+                SpellInfo.Add(deafblast.Name, new SpellStruct(q, w, e));
+                SpellInfo.Add(forge.Name, new SpellStruct(e, e, q));
+                SpellInfo.Add(emp.Name, new SpellStruct(w, w, w));
+                SpellInfo.Add(alacrity.Name, new SpellStruct(w, w, e));
+                SpellInfo.Add(chaosmeteor.Name, new SpellStruct(e, e, w));
+                spell[1] = tornado;
+                spell[2] = chaosmeteor;
+                spell[3] = emp;
+                spell[4] = deafblast;
+                spell[5] = coldsnap;
+                spell[6] = ghostwalk;
+                spell[7] = forge;
+                spell[8] = icewall;
+                spell[9] = alacrity;
+                spell[0] = ss;
+                spell[10] = chaosmeteor; //extra one just for checking condition, will not be used
+            }
             float[] spellcd = new float[10];
             float[] spelltotalcd = new float[10];
             for (int i = 0; i < 10; i++)
@@ -239,81 +276,113 @@ namespace InvokerSkill
                 spellcd[i] = spell[i].Cooldown;
                 spelltotalcd[i] = spell[i].CooldownLength;
             }
-            #region ChangeSkillIcon
-            Drawing.DrawRect(new Vector2(startposx, startposy), new Vector2(50, 50), GetTexture("materials/ensage_ui/spellicons/invoker_tornado.vmat"));
-            Drawing.DrawRect(new Vector2(startposx + 50, startposy), new Vector2(50, 50), GetTexture("materials/ensage_ui/spellicons/invoker_chaos_meteor.vmat"));
-            Drawing.DrawRect(new Vector2(startposx + 100, startposy), new Vector2(50, 50), GetTexture("materials/ensage_ui/spellicons/invoker_emp.vmat"));
-            Drawing.DrawRect(new Vector2(startposx + 150, startposy), new Vector2(50, 50), GetTexture("materials/ensage_ui/spellicons/invoker_deafening_blast.vmat"));
-            Drawing.DrawRect(new Vector2(startposx + 200, startposy), new Vector2(50, 50), GetTexture("materials/ensage_ui/spellicons/invoker_cold_snap.vmat"));
-            Drawing.DrawRect(new Vector2(startposx + 250, startposy), new Vector2(50, 50), GetTexture("materials/ensage_ui/spellicons/invoker_ghost_walk.vmat"));
-            Drawing.DrawRect(new Vector2(startposx + 300, startposy), new Vector2(50, 50), GetTexture("materials/ensage_ui/spellicons/invoker_forge_spirit.vmat"));
-            Drawing.DrawRect(new Vector2(startposx + 350, startposy), new Vector2(50, 50), GetTexture("materials/ensage_ui/spellicons/invoker_ice_wall.vmat"));
-            Drawing.DrawRect(new Vector2(startposx + 400, startposy), new Vector2(50, 50), GetTexture("materials/ensage_ui/spellicons/invoker_alacrity.vmat"));
-            Drawing.DrawRect(new Vector2(startposx + 450, startposy), new Vector2(50, 50), GetTexture("materials/ensage_ui/spellicons/invoker_sun_strike.vmat"));
-            #endregion
+            Drawing.DrawRect(new Vector2((float)startposx, (float)startposy), vector_size, GetTexture("materials/ensage_ui/spellicons/invoker_tornado.vmat"));
+            Drawing.DrawRect(new Vector2((float)startposx + size, (float)startposy), vector_size, GetTexture("materials/ensage_ui/spellicons/invoker_chaos_meteor.vmat"));
+            Drawing.DrawRect(new Vector2((float)startposx + size*2, (float)startposy), vector_size, GetTexture("materials/ensage_ui/spellicons/invoker_emp.vmat"));
+            Drawing.DrawRect(new Vector2((float)startposx + size*3, (float)startposy), vector_size, GetTexture("materials/ensage_ui/spellicons/invoker_deafening_blast.vmat"));
+            Drawing.DrawRect(new Vector2((float)startposx + size*4, (float)startposy), vector_size, GetTexture("materials/ensage_ui/spellicons/invoker_cold_snap.vmat"));
+            Drawing.DrawRect(new Vector2((float)startposx + size*5, (float)startposy), vector_size, GetTexture("materials/ensage_ui/spellicons/invoker_ghost_walk.vmat"));
+            Drawing.DrawRect(new Vector2((float)startposx + size*6, (float)startposy), vector_size, GetTexture("materials/ensage_ui/spellicons/invoker_forge_spirit.vmat"));
+            Drawing.DrawRect(new Vector2((float)startposx + size*7, (float)startposy), vector_size, GetTexture("materials/ensage_ui/spellicons/invoker_ice_wall.vmat"));
+            Drawing.DrawRect(new Vector2((float)startposx + size*8, (float)startposy), vector_size, GetTexture("materials/ensage_ui/spellicons/invoker_alacrity.vmat"));
+            Drawing.DrawRect(new Vector2((float)startposx + size*9, (float)startposy), vector_size, GetTexture("materials/ensage_ui/spellicons/invoker_sun_strike.vmat"));
+
 
             //draw box
-            Drawing.DrawRect(new Vector2(startposx, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150), true);
-            Drawing.DrawRect(new Vector2(startposx + 50, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150), true);
-            Drawing.DrawRect(new Vector2(startposx + 100, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150), true);
-            Drawing.DrawRect(new Vector2(startposx + 150, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150), true);
-            Drawing.DrawRect(new Vector2(startposx + 200, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150), true);
-            Drawing.DrawRect(new Vector2(startposx + 250, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150), true);
-            Drawing.DrawRect(new Vector2(startposx + 300, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150), true);
-            Drawing.DrawRect(new Vector2(startposx + 350, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150), true);
-            Drawing.DrawRect(new Vector2(startposx + 400, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150), true);
-            Drawing.DrawRect(new Vector2(startposx + 450, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150), true);
+            Drawing.DrawRect(new Vector2((float)startposx, (float)startposy), vector_size, new Color(0, 0, 0, 150), true);
+            Drawing.DrawRect(new Vector2((float)startposx + size, (float)startposy), vector_size, new Color(0, 0, 0, 150), true);
+            Drawing.DrawRect(new Vector2((float)startposx + size*2, (float)startposy), vector_size, new Color(0, 0, 0, 150), true);
+            Drawing.DrawRect(new Vector2((float)startposx + size*3, (float)startposy), vector_size, new Color(0, 0, 0, 150), true);
+            Drawing.DrawRect(new Vector2((float)startposx + size*4, (float)startposy), vector_size, new Color(0, 0, 0, 150), true);
+            Drawing.DrawRect(new Vector2((float)startposx + size*5, (float)startposy), vector_size, new Color(0, 0, 0, 150), true);
+            Drawing.DrawRect(new Vector2((float)startposx + size*6, (float)startposy), vector_size, new Color(0, 0, 0, 150), true);
+            Drawing.DrawRect(new Vector2((float)startposx + size*7, (float)startposy), vector_size, new Color(0, 0, 0, 150), true);
+            Drawing.DrawRect(new Vector2((float)startposx + size*8, (float)startposy), vector_size, new Color(0, 0, 0, 150), true);
+            Drawing.DrawRect(new Vector2((float)startposx + size*9, (float)startposy), vector_size, new Color(0, 0, 0, 150), true);
 
-            Drawing.DrawRect(new Vector2(startposx, startposy), new Vector2(50, 50 - (1 - (spellcd[1] / spelltotalcd[1])) * 50), new Color(255, 255, 255, 70));
-            Drawing.DrawRect(new Vector2(startposx + 50, startposy), new Vector2(50, 50 - (1 - (spellcd[2] / spelltotalcd[2])) * 50), new Color(255, 255, 255, 70));
-            Drawing.DrawRect(new Vector2(startposx + 100, startposy), new Vector2(50, 50 - (1 - (spellcd[3] / spelltotalcd[3])) * 50), new Color(255, 255, 255, 70));
-            Drawing.DrawRect(new Vector2(startposx + 150, startposy), new Vector2(50, 50 - (1 - (spellcd[4] / spelltotalcd[4])) * 50), new Color(255, 255, 255, 70));
-            Drawing.DrawRect(new Vector2(startposx + 200, startposy), new Vector2(50, 50 - (1 - (spellcd[5] / spelltotalcd[5])) * 50), new Color(255, 255, 255, 70));
-            Drawing.DrawRect(new Vector2(startposx + 250, startposy), new Vector2(50, 50 - (1 - (spellcd[6] / spelltotalcd[6])) * 50), new Color(255, 255, 255, 70));
-            Drawing.DrawRect(new Vector2(startposx + 300, startposy), new Vector2(50, 50 - (1 - (spellcd[7] / spelltotalcd[7])) * 50), new Color(255, 255, 255, 70));
-            Drawing.DrawRect(new Vector2(startposx + 350, startposy), new Vector2(50, 50 - (1 - (spellcd[8] / spelltotalcd[8])) * 50), new Color(255, 255, 255, 70));
-            Drawing.DrawRect(new Vector2(startposx + 400, startposy), new Vector2(50, 50 - (1 - (spellcd[9] / spelltotalcd[9])) * 50), new Color(255, 255, 255, 70));
-            Drawing.DrawRect(new Vector2(startposx + 450, startposy), new Vector2(50, 50 - (1 - (spellcd[0] / spelltotalcd[0])) * 50), new Color(255, 255, 255, 70));
-
-            if (spellcd[1] != 0)
+            Drawing.DrawRect(new Vector2((float)startposx, (float)startposy), new Vector2(50, 50 - (1 - (spellcd[1] / spelltotalcd[1])) * 50), new Color(255, 255, 255, 70));
+            Drawing.DrawRect(new Vector2((float)startposx + size, (float)startposy), new Vector2(50, 50 - (1 - (spellcd[2] / spelltotalcd[2])) * 50), new Color(255, 255, 255, 70));
+            Drawing.DrawRect(new Vector2((float)startposx + size*2, (float)startposy), new Vector2(50, 50 - (1 - (spellcd[3] / spelltotalcd[3])) * 50), new Color(255, 255, 255, 70));
+            Drawing.DrawRect(new Vector2((float)startposx + size*3, (float)startposy), new Vector2(50, 50 - (1 - (spellcd[4] / spelltotalcd[4])) * 50), new Color(255, 255, 255, 70));
+            Drawing.DrawRect(new Vector2((float)startposx + size*4, (float)startposy), new Vector2(50, 50 - (1 - (spellcd[5] / spelltotalcd[5])) * 50), new Color(255, 255, 255, 70));
+            Drawing.DrawRect(new Vector2((float)startposx + size*5, (float)startposy), new Vector2(50, 50 - (1 - (spellcd[6] / spelltotalcd[6])) * 50), new Color(255, 255, 255, 70));
+            Drawing.DrawRect(new Vector2((float)startposx + size*6, (float)startposy), new Vector2(50, 50 - (1 - (spellcd[7] / spelltotalcd[7])) * 50), new Color(255, 255, 255, 70));
+            Drawing.DrawRect(new Vector2((float)startposx + size*7, (float)startposy), new Vector2(50, 50 - (1 - (spellcd[8] / spelltotalcd[8])) * 50), new Color(255, 255, 255, 70));
+            Drawing.DrawRect(new Vector2((float)startposx + size*8, (float)startposy), new Vector2(50, 50 - (1 - (spellcd[9] / spelltotalcd[9])) * 50), new Color(255, 255, 255, 70));
+            Drawing.DrawRect(new Vector2((float)startposx + size*9, (float)startposy), new Vector2(50, 50 - (1 - (spellcd[0] / spelltotalcd[0])) * 50), new Color(255, 255, 255, 70));
+            //-----------------------------------------not learn skill dim--------------------------------------------------------------
+            if (q.AbilityState == AbilityState.NotLearned || w.AbilityState == AbilityState.NotLearned)
             {
-                Drawing.DrawRect(new Vector2(startposx, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150));
+                Drawing.DrawRect(new Vector2((float)startposx, (float)startposy), vector_size, new Color(0, 0, 0, 200));
+                Drawing.DrawRect(new Vector2((float)startposx + size*5, (float)startposy), vector_size, new Color(0, 0, 0, 200));
+            }
+            if(w.AbilityState == AbilityState.NotLearned || e.AbilityState == AbilityState.NotLearned)
+            {
+                Drawing.DrawRect(new Vector2((float)startposx + size, (float)startposy), vector_size, new Color(0, 0, 0, 200));
+                Drawing.DrawRect(new Vector2((float)startposx + size*8, (float)startposy), vector_size, new Color(0, 0, 0, 200));
+            }
+            if(e.AbilityState == AbilityState.NotLearned || q.AbilityState == AbilityState.NotLearned)
+            {
+                Drawing.DrawRect(new Vector2((float)startposx + size*6, (float)startposy), vector_size, new Color(0, 0, 0, 200));
+                Drawing.DrawRect(new Vector2((float)startposx + size*7, (float)startposy), vector_size, new Color(0, 0, 0, 200));
+            }
+
+            if (w.AbilityState == AbilityState.NotLearned)
+            {
+                Drawing.DrawRect(new Vector2((float)startposx + size*2, (float)startposy), vector_size, new Color(0, 0, 0, 200));
+            }
+            if (q.AbilityState == AbilityState.NotLearned)
+            {
+                Drawing.DrawRect(new Vector2((float)startposx + size*4, (float)startposy), vector_size, new Color(0, 0, 0, 200));
+            }
+            if(e.AbilityState == AbilityState.NotLearned)
+            {
+                Drawing.DrawRect(new Vector2((float)startposx + size*9, (float)startposy), vector_size, new Color(0, 0, 0, 200));
+            }
+            if (e.AbilityState == AbilityState.NotLearned || q.AbilityState == AbilityState.NotLearned|| w.AbilityState == AbilityState.NotLearned)
+            {
+                Drawing.DrawRect(new Vector2((float)startposx + size*3, (float)startposy), vector_size, new Color(0, 0, 0, 200));
+            }
+            //------------------------------------------------------------------------------------------------------------------------------------
+                if (spellcd[1] != 0)
+            {
+                Drawing.DrawRect(new Vector2((float)startposx, (float)startposy), vector_size, new Color(0, 0, 0, 150));
             }
             if (spellcd[2] != 0)
             {
-                Drawing.DrawRect(new Vector2(startposx + 50, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150));
+                Drawing.DrawRect(new Vector2((float)startposx + size, (float)startposy), vector_size, new Color(0, 0, 0, 150));
             }
             if (spellcd[3] != 0)
             {
-                Drawing.DrawRect(new Vector2(startposx + 100, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150));
+                Drawing.DrawRect(new Vector2((float)startposx + size*2, (float)startposy), vector_size, new Color(0, 0, 0, 150));
             }
             if (spellcd[4] != 0)
             {
-                Drawing.DrawRect(new Vector2(startposx + 150, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150));
+                Drawing.DrawRect(new Vector2((float)startposx + size*3, (float)startposy), vector_size, new Color(0, 0, 0, 150));
             }
             if (spellcd[5] != 0)
             {
-                Drawing.DrawRect(new Vector2(startposx + 200, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150));
+                Drawing.DrawRect(new Vector2((float)startposx + size*4, (float)startposy), vector_size, new Color(0, 0, 0, 150));
             }
             if (spellcd[6] != 0)
             {
-                Drawing.DrawRect(new Vector2(startposx + 250, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150));
+                Drawing.DrawRect(new Vector2((float)startposx + size*5, (float)startposy), vector_size, new Color(0, 0, 0, 150));
             }
             if (spellcd[7] != 0)
             {
-                Drawing.DrawRect(new Vector2(startposx + 300, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150));
+                Drawing.DrawRect(new Vector2((float)startposx + size*6, (float)startposy), vector_size, new Color(0, 0, 0, 150));
             }
             if (spellcd[8] != 0)
             {
-                Drawing.DrawRect(new Vector2(startposx + 350, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150));
+                Drawing.DrawRect(new Vector2((float)startposx + size*7, (float)startposy), vector_size, new Color(0, 0, 0, 150));
             }
             if (spellcd[9] != 0)
             {
-                Drawing.DrawRect(new Vector2(startposx + 400, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150));
+                Drawing.DrawRect(new Vector2((float)startposx + size*8, (float)startposy), vector_size, new Color(0, 0, 0, 150));
             }
             if (spellcd[0] != 0)
             {
-                Drawing.DrawRect(new Vector2(startposx + 450, startposy), new Vector2(50, 50), new Color(0, 0, 0, 150));
+                Drawing.DrawRect(new Vector2((float)startposx + size*9, (float)startposy), vector_size, new Color(0, 0, 0, 150));
             }
 
         }
@@ -323,15 +392,15 @@ namespace InvokerSkill
                 return;
             if (ObjectMgr.LocalHero.ClassID != ClassID.CDOTA_Unit_Hero_Invoker) return;
             DrawShadowText(firstkey.ToString(), (int)startposx + 3, (int)startposy + 1, Color.LightCyan, FontArray);
-            DrawShadowText(secondkey.ToString(), (int)startposx + 53, (int)startposy + 1, Color.LightCyan, FontArray);
-            DrawShadowText(thirdkey.ToString(), (int)startposx + 103, (int)startposy + 1, Color.LightCyan, FontArray);
-            DrawShadowText(forthkey.ToString(), (int)startposx + 153, (int)startposy + 1, Color.LightCyan, FontArray);
-            DrawShadowText(fifthkey.ToString(), (int)startposx + 203, (int)startposy + 1, Color.LightCyan, FontArray);
-            DrawShadowText(sixthkey.ToString(), (int)startposx + 253, (int)startposy + 1, Color.LightCyan, FontArray);
-            DrawShadowText(seventhkey.ToString(), (int)startposx + 303, (int)startposy + 1, Color.LightCyan, FontArray);
-            DrawShadowText(eighthkey.ToString(), (int)startposx + 353, (int)startposy + 1, Color.LightCyan, FontArray);
-            DrawShadowText(ninthkey.ToString(), (int)startposx + 403, (int)startposy + 1, Color.LightCyan, FontArray);
-            DrawShadowText(tenthkey.ToString(), (int)startposx + 453, (int)startposy + 1, Color.LightCyan, FontArray);
+            DrawShadowText(secondkey.ToString(), (int)startposx  + (int)(size + 3), (int)startposy + 1, Color.LightCyan, FontArray);
+            DrawShadowText(thirdkey.ToString(), (int)startposx  + (int)(size *2 + 3), (int)startposy + 1, Color.LightCyan, FontArray);
+            DrawShadowText(forthkey.ToString(), (int)startposx  + (int)(size *3 + 3), (int)startposy + 1, Color.LightCyan, FontArray);
+            DrawShadowText(fifthkey.ToString(), (int)startposx  + (int)(size*4 + 3), (int)startposy + 1, Color.LightCyan, FontArray);
+            DrawShadowText(sixthkey.ToString(), (int)startposx  + (int)(size*5 + 3), (int)startposy + 1, Color.LightCyan, FontArray);
+            DrawShadowText(seventhkey.ToString(), (int)startposx  + (int)(size*6 + 3), (int)startposy + 1, Color.LightCyan, FontArray);
+            DrawShadowText(eighthkey.ToString(), (int)startposx  + (int)(size*7 + 3), (int)startposy + 1, Color.LightCyan, FontArray);
+            DrawShadowText(ninthkey.ToString(), (int)startposx  + (int)(size*8 + 3), (int)startposy + 1, Color.LightCyan, FontArray);
+            DrawShadowText(tenthkey.ToString(), (int)startposx  + (int)(size*9 + 3), (int)startposy + 1, Color.LightCyan, FontArray);
         }
         public static DotaTexture GetTexture(string name)
         {
